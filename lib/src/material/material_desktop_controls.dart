@@ -344,7 +344,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
         }
       },
       child: CenterPlayButton(
-        backgroundColor: Colors.black54,
+        backgroundColor: Colors.transparent,
         iconColor: Colors.white,
         isFinished: isFinished,
         isPlaying: controller.value.isPlaying,

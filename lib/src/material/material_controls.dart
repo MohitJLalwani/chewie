@@ -259,7 +259,7 @@ class _MaterialControlsState extends State<MaterialControls>
     final iconColor = Theme.of(context).textTheme.button!.color;
 
     return AnimatedOpacity(
-      opacity: notifier.hideStuff ? 0.0 : 1.0,
+      opacity: notifier.hideStuff ? 0.0 : 0.0,
       duration: const Duration(milliseconds: 300),
       child: Container(
         height: barHeight + (chewieController.isFullScreen ? 10.0 : 0),

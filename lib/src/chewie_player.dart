@@ -95,7 +95,7 @@ class ChewieState extends State<Chewie> {
       resizeToAvoidBottomInset: false,
       body: Container(
         alignment: Alignment.center,
-        color: Colors.black,
+        color: Colors.transparent,
         child: controllerProvider,
       ),
     );

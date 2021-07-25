@@ -92,7 +92,7 @@ class ChewieState extends State<Chewie> {
     _ChewieControllerProvider controllerProvider,
   ) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+     resizeToAvoidBottomInset: false,
       body: Container(
         alignment: Alignment.center,
         color: Colors.transparent,
@@ -137,11 +137,29 @@ class ChewieState extends State<Chewie> {
   }
 
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
+    final isAndroid = Theme.of(context).platform == TargetPlatform.android;
+    final videoWidth = widget.controller.videoPlayerController.value.size.width;
+    final videoHeight =
+        widget.controller.videoPlayerController.value.size.height;
     final TransitionRoute<void> route = PageRouteBuilder<void>(
       pageBuilder: _fullScreenRoutePageBuilder,
     );
 
-    onEnterFullScreen();
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    if (isAndroid) {
+        if(videoWidth < videoHeight){
+            SystemChrome.setPreferredOrientations([
+       DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown,
+      ]);}
+      else{       
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+      }
+    }
+   // onEnterFullScreen();
 
     if (!widget.controller.allowedScreenSleep) {
       Wakelock.enable();

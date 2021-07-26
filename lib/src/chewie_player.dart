@@ -26,13 +26,13 @@ typedef ChewieRoutePageBuilder = Widget Function(
 /// `video_player` is pretty low level. Chewie wraps it in a friendly skin to
 /// make it easy to use!
 class Chewie extends StatefulWidget {
-  const Chewie({
-    Key? key,
-    required this.controller,
-  }) : super(key: key);
+  const Chewie(
+      {Key? key, required this.controller, this.fullscreenPressCallback})
+      : super(key: key);
 
   /// The [ChewieController]
   final ChewieController controller;
+  final ValueChanged<bool>? fullscreenPressCallback;
 
   @override
   ChewieState createState() {
@@ -43,7 +43,7 @@ class Chewie extends StatefulWidget {
 class ChewieState extends State<Chewie> {
   bool _isFullScreen = false;
   late PlayerNotifier notifier;
-
+  ValueChanged<bool>? fullscreenPressCallback;
   @override
   void initState() {
     super.initState();
@@ -71,6 +71,7 @@ class ChewieState extends State<Chewie> {
       await _pushFullScreenWidget(context);
     } else if (_isFullScreen) {
       Navigator.of(context, rootNavigator: true).pop();
+      fullscreenPressCallback!(false);
       _isFullScreen = false;
     }
   }
@@ -92,7 +93,7 @@ class ChewieState extends State<Chewie> {
     _ChewieControllerProvider controllerProvider,
   ) {
     return Scaffold(
-     resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: false,
       body: Container(
         alignment: Alignment.center,
         color: Colors.transparent,
@@ -137,29 +138,13 @@ class ChewieState extends State<Chewie> {
   }
 
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
-    final isAndroid = Theme.of(context).platform == TargetPlatform.android;
-    final videoWidth = widget.controller.videoPlayerController.value.size.width;
-    final videoHeight =
-        widget.controller.videoPlayerController.value.size.height;
     final TransitionRoute<void> route = PageRouteBuilder<void>(
       pageBuilder: _fullScreenRoutePageBuilder,
     );
 
     SystemChrome.setEnabledSystemUIOverlays([]);
-    if (isAndroid) {
-        if(videoWidth < videoHeight){
-            SystemChrome.setPreferredOrientations([
-       DeviceOrientation.portraitUp,
-          DeviceOrientation.portraitDown,
-      ]);}
-      else{       
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
-      }
-    }
-   // onEnterFullScreen();
+
+    onEnterFullScreen();
 
     if (!widget.controller.allowedScreenSleep) {
       Wakelock.enable();
@@ -180,6 +165,7 @@ class ChewieState extends State<Chewie> {
   }
 
   void onEnterFullScreen() {
+    fullscreenPressCallback!(true);
     final videoWidth = widget.controller.videoPlayerController.value.size.width;
     final videoHeight =
         widget.controller.videoPlayerController.value.size.height;
